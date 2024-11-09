@@ -1,117 +1,97 @@
 
-import main_bg from '/my-logo.png'
 import styles from './app.module.css'
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-function sendFormData(formData) {
-	console.log('formData', formData)
-}
+const fieldsSchema = yup.object()
+	.shape({
+		email: yup.string()
+			// .matches(/^[w_]*$/, 'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчёркивание')
+			.min(3, 'Неверный логин. Должно быть не меньше 3 символов')
+			.max(20, 'Неверный логин. Должно быть не больше 20 символов'),
+		password: yup.string()
+			.matches(/^([^0-9]*)$/, 'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчёркивание')
+			.min(3, 'Неверный логин. Должно быть не меньше 3 символов')
+			.max(20, 'Неверный логин. Должно быть не больше 20 символов'),
+		repeatPassword: yup.string()
+			.matches(/^([^0-9]*)$/, 'Неверный логин. Допустимые символы: буквы, цифры и нижнее подчёркивание')
+			.min(3, 'Неверный логин. Должно быть не меньше 3 символов')
+			.max(20, 'Неверный логин. Должно быть не больше 20 символов'),
+	});
 
 export default function App() {
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
-	const [repeatPassword, setRepeatPassword] = useState('')
+	const {
+		register,
+		formState: { errors, isValid },
+		handleSubmit,
+		reset,
+	} = useForm(
+		{
+			mode: 'onBlur',
+			resolver: yupResolver(fieldsSchema),
+		},
+	)
 
-	const [emailError, setEmailError] = useState(null)
-	const [passwordError, setPasswordError] = useState(null)
-	const [repeatPasswordError, setRepeatPasswordError] = useState(null)
+	const emailError = errors?.email?.message
+	const passwordlError = errors?.password?.message
+	const repeatPasswordError = errors?.password?.message
 
-	function validateEmail({ target }) {
-		setEmail(target.value)
-		let errorMessage = null
-		if (!/^[\w_-]*$/.test(target.value)) {
-			errorMessage = 'Ошибка. Email может содержать латинские буквы, тире или нижние подчеркивание'
-		} else if (target.value.length > 12) {
-			errorMessage = 'Ошибка. Поле email не может быть длиннее 12 символов'
-		}
-		setEmailError(errorMessage)
-	}
-
-	const onEmailBlur = ({ target }) => {
-		if (target.value.length < 3) {
-			setEmailError('Ошибка. Должно быть не меньше 3 символов')
-		}
-	}
-
-	function validatePassword({ target }) {
-		setPassword(target.value)
-		let errorMessage = null
-		if (target.value.length > 12) {
-			errorMessage = 'Ошибка. Поле пароль не может быть длиннее 12 символов'
-		}
-		setPasswordError(errorMessage)
-	}
-
-	const onPasswordBlur = ({ target }) => {
-		if (target.value.length < 3) {
-			setPasswordError('Ошибка. В поле пароль должно быть не меньше 3 символов')
-		}
-	}
-
-	function validateRepeatPassword({ target }) {
-		setRepeatPassword(target.value)
-		let errorMessage = null
-		if (target.value.length > 12) {
-			errorMessage = 'Ошибка. Поле повторить пароль не может быть длиннее 12 символов'
-		}
-		setRepeatPasswordError(errorMessage)
-	}
-
-	const onRepeatPasswordBlur = ({ target }) => {
-		if (target.value.length < 3) {
-			setRepeatPasswordError('Ошибка. В поле повторить пароль должно быть не меньше 3 символов')
-		}
-	}
-
-	function onSubmit(event) {
-		event.preventDefault()
-		sendFormData({ email, password, repeatPassword })
+	const onSubmit = (formData) => {
+		console.log('formData', formData)
+		reset()
 	}
 
 	return (
 		<>
-			<img src={main_bg} style={{ width: '300px', marginBottom: '40px' }} />
-			<h1 style={{ marginBottom: '40px' }}>Start Coding...</h1>
 
-			<div className={styles.registration}>
-				<form className={styles.form} onSubmit={onSubmit}>
-					{emailError && <span className={styles.errorLabel}>{emailError}</span>}
-					{passwordError && <span className={styles.errorLabel}>{passwordError}</span>}
-					{repeatPasswordError && <span className={styles.errorLabel}>{repeatPasswordError}</span>}
-					<input
-						className={styles.formField}
-						type='text'
-						name='email'
-						placeholder='Enter email'
-						value={email}
-						onChange={validateEmail}
-						onBlur={onEmailBlur}
-					/>
+			<div className={styles.registration} onSubmit={handleSubmit(onSubmit)}>
+				<form className={styles.form} >
 
-					<input
-						className={styles.formField}
-						type='text'
-						name='password'
-						placeholder='Enter password'
-						value={password}
-						onChange={validatePassword}
-						onBlur={onPasswordBlur}
-					/>
+					<div className={styles.formFieldItem}>
+						<label>
+							Email
+							<input
+								className={styles.formField}
+								type='text'
+								placeholder='Enter email'
+								{...register('email')}
+							/>
+						</label>
+						{emailError && <div className={styles.errorLabel}>{emailError}</div>}
+					</div>
 
-					<input
-						className={styles.formField}
-						type='text'
-						name='repeatPassword'
-						placeholder='Enter password'
-						value={repeatPassword}
-						onChange={validateRepeatPassword}
-						onBlur={onRepeatPasswordBlur}
-					/>
+
+					<div className={styles.formFieldItem}>
+						<label>
+							Password
+							<input
+								className={styles.formField}
+								type='text'
+								placeholder='Enter email'
+								{...register('password')}
+							/>
+						</label>
+						{passwordlError && <div className={styles.errorLabel}>{passwordlError}</div>}
+					</div>
+
+					<div className={styles.formFieldItem}>
+						<label>
+							Password
+							<input
+								className={styles.formField}
+								type='text'
+								placeholder='Enter email'
+								{...register('repeatPassword')}
+							/>
+						</label>
+						{repeatPasswordError && <div className={styles.errorLabel}>{repeatPasswordError}</div>}
+					</div>
+
 
 					<button
 						className={styles.formButton}
 						type='submit'
-						disabled={emailError !== null || passwordError !== null || repeatPasswordError !== null}
 					>
 						Зарегистрироваться
 					</button>

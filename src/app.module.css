@@ -1,11 +1,15 @@
 .registration {
-	position: relative;
 	width: 300px;
-	height: 400px;
+	height: 600px;
 	padding: 30px 10px;
 	border: 3px solid #241717;
 	border-radius: 10px;
 	background-color: #ccc;
+}
+
+.formFieldItem {
+	position: relative;
+	margin-bottom: 40px;
 }
 
 .formField {
@@ -19,10 +23,6 @@
 
 .formField::placeholder {
 	color: #241717;
-}
-
-.formField:not(:last-child) {
-	margin-bottom: 20px;
 }
 
 .formButton {
@@ -43,13 +43,15 @@
 
 .errorLabel {
 	position: absolute;
-	top: -40px;
-	left: -20px;
-	width: 380px;
-	background-color: #ebe4e4;
-	border: 1px solid #ebe4e4;
-	border-radius: 10px;
+	bottom: -46px;
+	left: 0px;
 	font-size: 18px;
 	color: red;
 	padding: 5px 10px;
+}
+
+
+.inputBox input {
+	padding: 12px 10px;
+	
 }
