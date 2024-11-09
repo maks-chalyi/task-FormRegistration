@@ -1,7 +1,7 @@
 
 import main_bg from '/my-logo.png'
 import styles from './app.module.css'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 function sendFormData(formData) {
 	console.log('formData', formData)
@@ -16,6 +16,10 @@ export default function App() {
 	const [passwordError, setPasswordError] = useState(null)
 	const [repeatPasswordError, setRepeatPasswordError] = useState(null)
 
+	const fieldPasswordRef = useRef(null)
+	const fieldRepeatPasswordRef = useRef(null)
+	const submitButtonRef = useRef(null)
+
 	function validateEmail({ target }) {
 		setEmail(target.value)
 		let errorMessage = null
@@ -23,6 +27,8 @@ export default function App() {
 			errorMessage = 'Ошибка. Email может содержать латинские буквы, тире или нижние подчеркивание'
 		} else if (target.value.length > 12) {
 			errorMessage = 'Ошибка. Поле email не может быть длиннее 12 символов'
+		} else if (target.value.length === 12) {
+			fieldPasswordRef.current.focus();
 		}
 		setEmailError(errorMessage)
 	}
@@ -30,6 +36,7 @@ export default function App() {
 	const onEmailBlur = ({ target }) => {
 		if (target.value.length < 3) {
 			setEmailError('Ошибка. Должно быть не меньше 3 символов')
+			setIsDisabled(true)
 		}
 	}
 
@@ -38,6 +45,8 @@ export default function App() {
 		let errorMessage = null
 		if (target.value.length > 12) {
 			errorMessage = 'Ошибка. Поле пароль не может быть длиннее 12 символов'
+		} else if (target.value.length === 12) {
+			fieldRepeatPasswordRef.current.focus();
 		}
 		setPasswordError(errorMessage)
 	}
@@ -53,6 +62,8 @@ export default function App() {
 		let errorMessage = null
 		if (target.value.length > 12) {
 			errorMessage = 'Ошибка. Поле повторить пароль не может быть длиннее 12 символов'
+		} else if (target.value.length === 12) {
+			submitButtonRef.current.focus();
 		}
 		setRepeatPasswordError(errorMessage)
 	}
@@ -70,8 +81,6 @@ export default function App() {
 
 	return (
 		<>
-			<img src={main_bg} style={{ width: '300px', marginBottom: '40px' }} />
-			<h1 style={{ marginBottom: '40px' }}>Start Coding...</h1>
 
 			<div className={styles.registration}>
 				<form className={styles.form} onSubmit={onSubmit}>
@@ -93,6 +102,7 @@ export default function App() {
 						type='text'
 						name='password'
 						placeholder='Enter password'
+						ref={fieldPasswordRef}
 						value={password}
 						onChange={validatePassword}
 						onBlur={onPasswordBlur}
@@ -103,6 +113,7 @@ export default function App() {
 						type='text'
 						name='repeatPassword'
 						placeholder='Enter password'
+						ref={fieldRepeatPasswordRef}
 						value={repeatPassword}
 						onChange={validateRepeatPassword}
 						onBlur={onRepeatPasswordBlur}
@@ -111,6 +122,7 @@ export default function App() {
 					<button
 						className={styles.formButton}
 						type='submit'
+						ref={submitButtonRef}
 						disabled={emailError !== null || passwordError !== null || repeatPasswordError !== null}
 					>
 						Зарегистрироваться
